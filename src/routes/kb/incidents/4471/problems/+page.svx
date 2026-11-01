@@ -1,0 +1,61 @@
+---
+layout: runbook
+title: '#4471 is three problems, not one'
+owner: support desk
+status: proposed
+reviewed: 2026-11-01
+signature: Mateusz Kwasny
+---
+
+<script>
+  import ProblemTable from '#lib/kb/ProblemTable.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+
+  const REPO = 'https://github.com/kwasnymat/support-kb-4471/issues';
+</script>
+
+[#4471](/kb/incidents/4471) was merged as one issue and marked known: the parser reads dates month
+first. Reading every report body against its tenant shows three different problems. One fix will
+not close all of them, so each now has its own ticket.
+
+<ProblemTable
+  ticket={4471}
+  issues={{ parser: `${REPO}/1`, hint: `${REPO}/2`, 'one-day move': `${REPO}/3` }}
+/>
+
+## parser: day and month swapped
+
+A day-first tenant books 7 April and the invite says 4 July. The shared parser reads every date
+month first. It hits every day-first tenant, through the app, by email and through booking-v2 forms.
+This is the bug the queued fix is for.
+
+## hint: booking-v3 tells people to type month first
+
+Alder Physio, Copper Studio and Pale Harbour run booking-v3. Its date field shows the hint
+`MM/DD/YYYY`, so people type month first, and the form then reads the date day first. The symptom
+looks the same as `parser`, but the parser fix does not touch it: the hint and the form disagree.
+Intake tagged these by the reporter's browser, so the `hint` tag misses some and catches others
+that are not.
+
+## one-day move: the right date, a day early or late
+
+These reports are not swaps. "Invite says Tuesday 12 May. Calendar says Monday 11 May." "Client in
+Lisbon got Tuesday. Client in Toronto got Monday." The desk read them as a one-day move
+(`desk-notes.json`) but filed them under `parser` by tenant. A day-month swap cannot move a date by
+one day, so this is its own bug, most likely in how the invite's time zone is applied.
+
+<Callout kind="warn">
+Why they were merged: <a href="/kb/decisions/0001-dedupe-by-subject">decision 0001</a> merges on
+subject line alone, and all three problems arrive with the same subjects ("Wrong day on the
+invite", "Date is wrong"). Subject tells you the symptom. The tenant, its booking form and the body
+tell you the cause.
+</Callout>
+
+## How the counts are made
+
+Reports are taken once per id (the export repeats 15 of them), grouped with `causeOf` in
+`causes.ts` by tenant locale, channel and booking form, and the reports listed in `desk-notes.json`
+as one-day moves are counted on their own. The table is built from the data at render time.
+
+<RenderStamp {signature} />
