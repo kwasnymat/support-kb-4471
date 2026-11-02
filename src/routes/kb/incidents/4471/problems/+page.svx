@@ -46,6 +46,14 @@ Lisbon got Tuesday. Client in Toronto got Monday." The desk read them as a one-d
 day-month swap cannot move a date by one day, so this is its own bug, most likely in how the
 invite's time zone is applied.
 
+## Where they stand
+
+Engineering closed #4471 on 5 October:
+
+- `parser`: fixed by "fix(dates): parse dd/mm for eu locales". Ticket closed.
+- `hint`: won't fix. The booking-v3 form is retired. Ticket closed.
+- `one-day move`: not part of that work. The 5 reports are still unexplained, so this ticket stays open.
+
 <Callout kind="warn">
 Why they were merged: <a href="/kb/decisions/0001-dedupe-by-subject">decision 0001</a> merges on
 subject line alone, and all three problems arrive with the same subjects ("Wrong day on the
