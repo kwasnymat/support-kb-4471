@@ -33,6 +33,7 @@
 aside { border-left: 4px solid var(--accent); padding: 0.5rem 1rem; margin: 1rem 0; background: var(--note-bg); }
 aside.warn { border-color: var(--warn); background: var(--warn-bg); }
 .sum { font-size: 1.1rem; }
+.note { color: var(--muted); font-size: 0.85em; }
 .stamp { margin: 2rem 0 0; font: 0.85rem var(--mono); color: var(--muted); }
 .stamp b { color: var(--accent); letter-spacing: 0.04em; }
 </style>
@@ -47,16 +48,17 @@ aside.warn { border-color: var(--warn); background: var(--warn-bg); }
 <main>
 <p><a href="/kb/incidents/4471">#4471</a> was merged as one issue and marked known: the parser reads dates month first. Reading every report body against its tenant shows three different problems. One fix will not close all of them, so each now has its own ticket.</p>
 <p class="sum"><strong>412</strong> reports merged into #4471 · <strong>3</strong> problems</p>
-<table><thead><tr><th>problem</th><th>reports</th><th>tenants</th><th>seen</th><th>ticket</th></tr></thead><tbody><tr><td><code>parser</code></td><td>374</td><td>11</td><td>2026-04-01 → 2026-10-04</td><td><a href="https://github.com/kwasnymat/support-kb-4471/issues/1">kwasnymat/support-kb-4471#1</a></td></tr><tr><td><code>hint</code></td><td>33</td><td>3</td><td>2026-04-17 → 2026-09-22</td><td><a href="https://github.com/kwasnymat/support-kb-4471/issues/2">kwasnymat/support-kb-4471#2</a></td></tr><tr><td><code>one-day move</code></td><td>5</td><td>5</td><td>2026-04-02 → 2026-10-04</td><td><a href="https://github.com/kwasnymat/support-kb-4471/issues/3">kwasnymat/support-kb-4471#3</a></td></tr></tbody></table>
+<table><thead><tr><th>problem</th><th>reports</th><th>tenants</th><th>seen</th><th>ticket</th></tr></thead><tbody><tr><td><code>parser</code></td><td>379</td><td>11</td><td>2026-04-01 → 2026-10-04</td><td><a href="https://github.com/kwasnymat/support-kb-4471/issues/1">kwasnymat/support-kb-4471#1</a></td></tr><tr><td><code>hint</code></td><td>33</td><td>3</td><td>2026-04-17 → 2026-09-22</td><td><a href="https://github.com/kwasnymat/support-kb-4471/issues/2">kwasnymat/support-kb-4471#2</a></td></tr><tr><td><code>one-day move</code></td><td>5</td><td>5</td><td>2026-04-02 → 2026-10-04</td><td><a href="https://github.com/kwasnymat/support-kb-4471/issues/3">kwasnymat/support-kb-4471#3</a></td></tr></tbody></table>
+<p class="note">The 5 <code>one-day move</code> reports are also counted under <code>parser</code>, where the desk files them by tenant.</p>
 <h2>parser: day and month swapped</h2>
 <p>A day-first tenant books 7 April and the invite says 4 July. The shared parser reads every date month first. It hits every day-first tenant, through the app, by email and through booking-v2 forms. This is the bug the queued fix is for.</p>
 <h2>hint: booking-v3 tells people to type month first</h2>
 <p>Alder Physio, Copper Studio and Pale Harbour run booking-v3. Its date field shows the hint <code>MM/DD/YYYY</code>, so people type month first, and the form then reads the date day first. The symptom looks the same as <code>parser</code>, but the parser fix does not touch it: the hint and the form disagree. Intake tagged these by the reporter's browser, so the <code>hint</code> tag misses some and catches others that are not.</p>
 <h2>one-day move: the right date, a day early or late</h2>
-<p>These reports are not swaps. "Invite says Tuesday 12 May. Calendar says Monday 11 May." "Client in Lisbon got Tuesday. Client in Toronto got Monday." The desk read them as a one-day move (<code>desk-notes.json</code>) but filed them under <code>parser</code> by tenant. A day-month swap cannot move a date by one day, so this is its own bug, most likely in how the invite's time zone is applied.</p>
+<p>These reports are not swaps. "Invite says Tuesday 12 May. Calendar says Monday 11 May." "Client in Lisbon got Tuesday. Client in Toronto got Monday." The desk read them as a one-day move (<code>desk-notes.json</code>) and files them under <code>parser</code> by tenant, so they stay counted there too. A day-month swap cannot move a date by one day, so this is its own bug, most likely in how the invite's time zone is applied.</p>
 <aside class="warn">Why they were merged: <a href="/kb/decisions/0001-dedupe-by-subject">decision 0001</a> merges on subject line alone, and all three problems arrive with the same subjects ("Wrong day on the invite", "Date is wrong"). Subject tells you the symptom. The tenant, its booking form and the body tell you the cause.</aside>
 <h2>How the counts are made</h2>
-<p>Reports are taken once per id (the export repeats 15 of them), grouped with <code>causeOf</code> in <code>causes.ts</code> by tenant locale, channel and booking form, and the reports listed in <code>desk-notes.json</code> as one-day moves are counted on their own. The table is built from the data at render time.</p>
+<p>Reports are taken once per id (the export repeats 15 of them), grouped with <code>causeOf</code> in <code>causes.ts</code> by tenant locale, channel and booking form, as the desk's own view counts them. The reports listed in <code>desk-notes.json</code> as one-day moves stay counted where they are filed and get their own row. The table is built from the data at render time.</p>
 <p class="stamp">desk ref <b>DR-3E27-969X</b></p>
 </main>
 <footer>Pages are written by people. Tables and charts are built from data at render time.</footer>

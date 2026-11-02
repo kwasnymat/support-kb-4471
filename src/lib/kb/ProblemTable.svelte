@@ -14,7 +14,7 @@
     [
       ...groupByCause(merged, tenantOf).map((g) => ({
         problem: g.cause as Problem,
-        reports: g.reports.filter((r) => !notes.oneDayMove.includes(r.id)),
+        reports: g.reports,
       })),
       { problem: 'one-day move' as Problem, reports: moved },
     ].sort((a, b) => b.reports.length - a.reports.length),
@@ -46,6 +46,12 @@
   </tbody>
 </table>
 
+<p class="note">
+  The {moved.length} <code>one-day move</code> reports are also counted under <code>parser</code>, where the desk files
+  them by tenant.
+</p>
+
 <style>
   .sum { font-size: 1.1rem; }
+  .note { color: var(--muted); font-size: 0.85em; }
 </style>

@@ -42,8 +42,9 @@ that are not.
 
 These reports are not swaps. "Invite says Tuesday 12 May. Calendar says Monday 11 May." "Client in
 Lisbon got Tuesday. Client in Toronto got Monday." The desk read them as a one-day move
-(`desk-notes.json`) but filed them under `parser` by tenant. A day-month swap cannot move a date by
-one day, so this is its own bug, most likely in how the invite's time zone is applied.
+(`desk-notes.json`) and files them under `parser` by tenant, so they stay counted there too. A
+day-month swap cannot move a date by one day, so this is its own bug, most likely in how the
+invite's time zone is applied.
 
 <Callout kind="warn">
 Why they were merged: <a href="/kb/decisions/0001-dedupe-by-subject">decision 0001</a> merges on
@@ -55,7 +56,8 @@ tell you the cause.
 ## How the counts are made
 
 Reports are taken once per id (the export repeats 15 of them), grouped with `causeOf` in
-`causes.ts` by tenant locale, channel and booking form, and the reports listed in `desk-notes.json`
-as one-day moves are counted on their own. The table is built from the data at render time.
+`causes.ts` by tenant locale, channel and booking form, as the desk's own view counts them. The
+reports listed in `desk-notes.json` as one-day moves stay counted where they are filed and get
+their own row. The table is built from the data at render time.
 
 <RenderStamp {signature} />
